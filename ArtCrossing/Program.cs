@@ -7,6 +7,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddHttpClient<IArtworkSource, ArticArtworkSource>();
+builder.Services.AddHttpClient<IArtworkSource, MetArtworkSource>();
 
 var app = builder.Build();
 
