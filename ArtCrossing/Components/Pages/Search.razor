@@ -1,0 +1,93 @@
+@page "/"
+@rendermode InteractiveServer
+@inject IEnumerable<IArtworkSource> ArtworkSources
+
+<PageTitle>Art Crossing</PageTitle>
+
+<h1>Art Crossing</h1>
+
+<form @onsubmit="SearchAsync">
+    <input type="search" @bind="query" placeholder="Search artworks" aria-label="Search artworks"/>
+    <button type="submit" disabled="@isSearching">Search</button>
+</form>
+
+@foreach (string error in errors)
+{
+    <p>@error</p>
+}
+
+@if (isSearching)
+{
+    <p><em>Searching...</em></p>
+}
+else if (results is not null)
+{
+    if (results.Count == 0)
+    {
+        <p>No artworks found.</p>
+    }
+    else
+    {
+        <p>@results.Count artworks found.</p>
+        <ul>
+            @foreach (Artwork artwork in results)
+            {
+                <li @key="artwork.Key">
+                    @if (string.IsNullOrEmpty(artwork.ImageUrl) || failedImages.Contains(artwork.Key))
+                    {
+                        <p><em>Image not available</em></p>
+                    }
+                    else
+                    {
+                        <img src="@artwork.ImageUrl" alt="@artwork.AltText" width="200"
+                             @onerror="() => failedImages.Add(artwork.Key)"/>
+                    }
+                    <h2>@artwork.Title</h2>
+                    <p>@artwork.Artist, @(artwork.CompletionYear?.ToString() ?? "Unknown year")</p>
+                    <p>@artwork.Medium</p>
+                    <p>@artwork.MuseumName</p>
+                    <a href="@artwork.WebUrl" target="_blank" rel="noopener noreferrer">View on the museum website</a>
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    private string query = string.Empty;
+    private List<Artwork>? results;
+    private List<string> errors = [];
+    private HashSet<string> failedImages = [];
+    private bool isSearching;
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return;
+        }
+
+        isSearching = true;
+        errors = [];
+        failedImages = [];
+        results = null;
+
+        IReadOnlyList<Artwork>[] resultsPerSource = await Task.WhenAll(ArtworkSources.Select(SearchSourceAsync));
+
+        results = resultsPerSource.SelectMany(artworks => artworks).ToList();
+        isSearching = false;
+    }
+
+    private async Task<IReadOnlyList<Artwork>> SearchSourceAsync(IArtworkSource source)
+    {
+        try
+        {
+            return await source.SearchAsync(query);
+        }
+        catch (ArtworkSourceException ex)
+        {
+            errors.Add(ex.Message);
+            return [];
+        }
+    }
+}

@@ -11,6 +11,7 @@ public class ArticArtworkSource : IArtworkSource
     private const string Fields = "id,title,artist_title,date_end,medium_display,image_id,thumbnail";
     private const int MaxResults = 10;
     private const string ImageSize = "full/843,/0/default.jpg";
+    private const string UserAgent = "ArtCrossing/1.0";
 
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
     {
@@ -22,6 +23,7 @@ public class ArticArtworkSource : IArtworkSource
     public ArticArtworkSource(HttpClient httpClient)
     {
         _httpClient = httpClient;
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
     }
 
     public MuseumEnum Museum => MuseumEnum.ArtInstituteOfChicago;
