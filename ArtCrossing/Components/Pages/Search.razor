@@ -13,60 +13,67 @@
     </form>
 </section>
 
-@foreach (string error in errors)
-{
-    <p>@error</p>
-}
-
-@if (isSearching)
-{
-    <p><em>Searching...</em></p>
-}
-else if (results is not null)
-{
-    if (results.Count == 0)
+<section class="results">
+    @foreach (string error in errors)
     {
-        <p>No artworks found.</p>
+        <p class="source-error">@error</p>
     }
-    else
-    {
-        <p>@results.Count artworks found.</p>
-        <div class="results-grid">
-            @foreach (Artwork artwork in results)
-            {
-                <article class="artwork-card" @key="artwork.Key">
-                    <div class="artwork-image">
-                        @if (string.IsNullOrEmpty(artwork.ImageUrl) || failedImages.Contains(artwork.Key))
-                        {
-                            <span class="no-image">Image not available</span>
-                        }
-                        else
-                        {
-                            <img src="@artwork.ImageUrl" alt="@artwork.AltText" loading="lazy"
-                                 @onerror="() => failedImages.Add(artwork.Key)"/>
-                        }
-                    </div>
 
-                    <div class="artwork-body">
-                        <div>
-                            <h2 class="artwork-title">@artwork.Title</h2>
-                            <p class="artwork-artist">@artwork.Artist, @(artwork.CompletionYear?.ToString() ?? "Unknown year")</p>
-                            <p class="artwork-medium" title="@artwork.Medium">@artwork.Medium</p>
+    @if (isSearching)
+    {
+        <p class="status-message"><em>Searching...</em></p>
+    }
+    else if (results is not null)
+    {
+        if (results.Count == 0)
+        {
+            <p class="status-message">No artworks found for “@searchedQuery”.</p>
+        }
+        else
+        {
+            <div class="results-summary">
+                <span class="results-count">@results.Count results</span>
+                <span class="results-query">for “@searchedQuery”</span>
+            </div>
+
+            <div class="results-grid">
+                @foreach (Artwork artwork in results)
+                {
+                    <article class="artwork-card" @key="artwork.Key">
+                        <div class="artwork-image">
+                            @if (string.IsNullOrEmpty(artwork.ImageUrl) || failedImages.Contains(artwork.Key))
+                            {
+                                <span class="no-image">Image not available</span>
+                            }
+                            else
+                            {
+                                <img src="@artwork.ImageUrl" alt="@artwork.AltText" loading="lazy"
+                                     @onerror="() => failedImages.Add(artwork.Key)"/>
+                            }
                         </div>
 
-                        <div class="artwork-footer">
-                            <span class="museum-badge">@artwork.MuseumName</span>
-                            <a class="artwork-link" href="@artwork.WebUrl" target="_blank" rel="noopener noreferrer">View on the museum website</a>
+                        <div class="artwork-body">
+                            <div>
+                                <h2 class="artwork-title">@artwork.Title</h2>
+                                <p class="artwork-artist">@artwork.Artist, @(artwork.CompletionYear?.ToString() ?? "Unknown year")</p>
+                                <p class="artwork-medium" title="@artwork.Medium">@artwork.Medium</p>
+                            </div>
+
+                            <div class="artwork-footer">
+                                <span class="museum-badge">@artwork.MuseumName</span>
+                                <a class="artwork-link" href="@artwork.WebUrl" target="_blank" rel="noopener noreferrer">View on the museum website</a>
+                            </div>
                         </div>
-                    </div>
-                </article>
-            }
-        </div>
+                    </article>
+                }
+            </div>
+        }
     }
-}
+</section>
 
 @code {
     private string query = string.Empty;
+    private string searchedQuery = string.Empty;
     private List<Artwork>? results;
     private List<string> errors = [];
     private HashSet<string> failedImages = [];
@@ -80,6 +87,7 @@ else if (results is not null)
         }
 
         isSearching = true;
+        searchedQuery = query.Trim();
         errors = [];
         failedImages = [];
         results = null;

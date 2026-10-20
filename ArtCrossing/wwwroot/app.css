@@ -19,8 +19,16 @@ html, body {
     font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+body {
+    background-color: var(--surface);
+    color: var(--on-surface);
+    font-size: 0.9375rem;
+    line-height: 1.5rem;
+    -webkit-font-smoothing: antialiased;
+}
+
 a, .btn-link {
-    color: #006bb7;
+    color: var(--primary-container);
 }
 
 .btn-primary {
