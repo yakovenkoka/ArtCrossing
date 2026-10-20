@@ -4,12 +4,14 @@
 
 <PageTitle>Art Crossing</PageTitle>
 
-<h1>Art Crossing</h1>
+<section class="search-hero">
+    <h1>Explore the Art</h1>
 
-<form @onsubmit="SearchAsync">
-    <input type="search" @bind="query" placeholder="Search artworks" aria-label="Search artworks"/>
-    <button type="submit" disabled="@isSearching">Search</button>
-</form>
+    <form class="search-form" @onsubmit="SearchAsync">
+        <input type="search" @bind="query" placeholder="Search artworks, e.g. water lilies" aria-label="Search artworks"/>
+        <button type="submit" disabled="@isSearching">Search</button>
+    </form>
+</section>
 
 @foreach (string error in errors)
 {
