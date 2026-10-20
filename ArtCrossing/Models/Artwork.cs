@@ -99,6 +99,13 @@ public record Artwork : IComparable<Artwork>
         MuseumEnum.MetropolitanMuseumOfArt => "The Met",
         _ => "Unknown museum"
     };
+
+    public string WebUrl => Museum switch
+    {
+        MuseumEnum.ArtInstituteOfChicago => $"https://www.artic.edu/artworks/{SourceId}",
+        MuseumEnum.MetropolitanMuseumOfArt => $"https://www.metmuseum.org/art/collection/search/{SourceId}",
+        _ => string.Empty
+    };
     
     public string Key => $"{Museum}-{SourceId}";
     
