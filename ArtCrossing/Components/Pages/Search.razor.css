@@ -1,8 +1,12 @@
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(17rem, 100%), 1fr));
+    gap: 2rem;
+}
+
 .artwork-card {
     display: flex;
     flex-direction: column;
-    max-width: 20rem;
-    margin-bottom: 2rem;
     overflow: hidden;
     background-color: var(--surface-container-lowest);
     border-radius: 0.5rem;
