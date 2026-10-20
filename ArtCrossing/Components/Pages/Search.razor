@@ -29,27 +29,35 @@ else if (results is not null)
     else
     {
         <p>@results.Count artworks found.</p>
-        <ul>
-            @foreach (Artwork artwork in results)
-            {
-                <li @key="artwork.Key">
+        @foreach (Artwork artwork in results)
+        {
+            <article class="artwork-card" @key="artwork.Key">
+                <div class="artwork-image">
                     @if (string.IsNullOrEmpty(artwork.ImageUrl) || failedImages.Contains(artwork.Key))
                     {
-                        <p><em>Image not available</em></p>
+                        <span class="no-image">Image not available</span>
                     }
                     else
                     {
-                        <img src="@artwork.ImageUrl" alt="@artwork.AltText" width="200"
+                        <img src="@artwork.ImageUrl" alt="@artwork.AltText" loading="lazy"
                              @onerror="() => failedImages.Add(artwork.Key)"/>
                     }
-                    <h2>@artwork.Title</h2>
-                    <p>@artwork.Artist, @(artwork.CompletionYear?.ToString() ?? "Unknown year")</p>
-                    <p>@artwork.Medium</p>
-                    <p>@artwork.MuseumName</p>
-                    <a href="@artwork.WebUrl" target="_blank" rel="noopener noreferrer">View on the museum website</a>
-                </li>
-            }
-        </ul>
+                </div>
+
+                <div class="artwork-body">
+                    <div>
+                        <h2 class="artwork-title">@artwork.Title</h2>
+                        <p class="artwork-artist">@artwork.Artist, @(artwork.CompletionYear?.ToString() ?? "Unknown year")</p>
+                        <p class="artwork-medium" title="@artwork.Medium">@artwork.Medium</p>
+                    </div>
+
+                    <div class="artwork-footer">
+                        <span class="museum-badge">@artwork.MuseumName</span>
+                        <a class="artwork-link" href="@artwork.WebUrl" target="_blank" rel="noopener noreferrer">View on the museum website</a>
+                    </div>
+                </div>
+            </article>
+        }
     }
 }
 

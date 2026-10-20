@@ -1,0 +1,113 @@
+.artwork-card {
+    display: flex;
+    flex-direction: column;
+    max-width: 20rem;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    background-color: var(--surface-container-lowest);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+}
+
+    .artwork-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+.artwork-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background-color: var(--surface-container);
+}
+
+    .artwork-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .artwork-card:hover .artwork-image img {
+        transform: scale(1.02);
+    }
+
+    .no-image {
+        color: var(--secondary);
+        font-size: 0.8125rem;
+        font-style: italic;
+    }
+
+.artwork-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1.25rem;
+}
+
+    .artwork-title {
+        display: -webkit-box;
+        margin-bottom: 0.25rem;
+        overflow: hidden;
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-style: italic;
+        font-weight: 500;
+        line-height: 1.75rem;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        transition: color 0.2s;
+    }
+
+    .artwork-card:hover .artwork-title {
+        color: var(--primary-container);
+    }
+
+    .artwork-artist {
+        margin-bottom: 0.25rem;
+        color: var(--secondary);
+    }
+
+    .artwork-medium {
+        margin-bottom: 0;
+        overflow: hidden;
+        color: var(--secondary);
+        font-size: 0.8125rem;
+        line-height: 1.25rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+.artwork-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+}
+
+    .museum-badge {
+        padding: 0.25rem 0.625rem;
+        border-radius: 0.25rem;
+        background-color: var(--surface-container);
+        color: var(--on-surface-variant);
+        font-size: 0.6875rem;
+        font-weight: 500;
+        line-height: 1rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .artwork-link {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .artwork-link:hover {
+            text-decoration: underline;
+        }
