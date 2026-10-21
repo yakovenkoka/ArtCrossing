@@ -131,6 +131,7 @@
     }
 
 .artwork-image {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -155,6 +156,46 @@
         font-size: 0.8125rem;
         font-style: italic;
     }
+
+    .favourite-toggle {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: var(--secondary);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(4px);
+        transition: background-color 0.15s, color 0.15s;
+    }
+
+        .favourite-toggle::before {
+            content: "";
+            width: 1.125rem;
+            height: 1.125rem;
+            background-color: currentColor;
+            mask: url("icons/star.svg") no-repeat center / contain;
+        }
+
+        .favourite-toggle:hover {
+            background-color: var(--surface-container-lowest);
+            color: var(--primary-container);
+        }
+
+        .favourite-toggle.starred {
+            color: var(--primary-container);
+        }
+
+            .favourite-toggle.starred::before {
+                mask-image: url("icons/star-filled.svg");
+            }
 
 .artwork-body {
     display: flex;

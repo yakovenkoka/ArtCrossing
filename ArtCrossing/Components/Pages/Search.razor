@@ -50,6 +50,10 @@
                                 <img src="@artwork.ImageUrl" alt="@artwork.AltText" loading="lazy"
                                      @onerror="() => failedImages.Add(artwork.Key)"/>
                             }
+
+                            <button type="button" class="favourite-toggle @(artwork.Starred ? "starred" : "")"
+                                    aria-label="@(artwork.Starred ? "Remove from favourites" : "Add to favourites")"
+                                    @onclick="() => artwork.Starred = !artwork.Starred"></button>
                         </div>
 
                         <div class="artwork-body">
