@@ -1,0 +1,92 @@
+@page "/"
+@rendermode InteractiveServer
+@inject IEnumerable<IArtworkSource> ArtworkSources
+@inject FavouritesService Favourites
+
+<PageTitle>Art Crossing</PageTitle>
+
+<section class="search-hero">
+    <h1>Explore the Art</h1>
+
+    <form class="search-form" @onsubmit="SearchAsync">
+        <input type="search" @bind="query" placeholder="Search artworks, e.g. water lilies" aria-label="Search artworks"/>
+        <button type="submit" disabled="@isSearching">Search</button>
+    </form>
+</section>
+
+<section class="results">
+    @foreach (string error in errors)
+    {
+        <p class="source-error">@error</p>
+    }
+
+    @if (isSearching)
+    {
+        <p class="status-message"><em>Searching...</em></p>
+    }
+    else if (results is not null)
+    {
+        if (results.Count == 0)
+        {
+            <p class="status-message">No artworks found for “@searchedQuery”.</p>
+        }
+        else
+        {
+            <div class="results-summary">
+                <span class="results-count">@results.Count results</span>
+                <span class="results-query">for “@searchedQuery”</span>
+            </div>
+
+            <div class="results-grid">
+                @foreach (Artwork artwork in results)
+                {
+                    <ArtworkCard @key="artwork.Key" Artwork="artwork" OnToggleFavourite="() => Favourites.Toggle(artwork)"/>
+                }
+            </div>
+        }
+    }
+</section>
+
+@code {
+    private string query = string.Empty;
+    private string searchedQuery = string.Empty;
+    private List<Artwork>? results;
+    private List<string> errors = [];
+    private bool isSearching;
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return;
+        }
+
+        isSearching = true;
+        searchedQuery = query.Trim();
+        errors = [];
+        results = null;
+
+        IReadOnlyList<Artwork>[] resultsPerSource = await Task.WhenAll(ArtworkSources.Select(SearchSourceAsync));
+
+        results = resultsPerSource.SelectMany(artworks => artworks).ToList();
+        foreach (Artwork artwork in results)
+        {
+            artwork.Starred = Favourites.IsFavourite(artwork);
+        }
+
+        isSearching = false;
+    }
+
+    private async Task<IReadOnlyList<Artwork>> SearchSourceAsync(IArtworkSource source)
+    {
+        try
+        {
+            return await source.SearchAsync(query);
+        }
+        catch (ArtworkSourceException ex)
+        {
+            errors.Add(ex.Message);
+            return [];
+        }
+    }
+}

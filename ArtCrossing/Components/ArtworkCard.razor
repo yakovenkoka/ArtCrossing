@@ -1,0 +1,37 @@
+<article class="artwork-card">
+    <div class="artwork-image">
+        @if (string.IsNullOrEmpty(Artwork.ImageUrl) || imageFailed)
+        {
+            <span class="no-image">Image not available</span>
+        }
+        else
+        {
+            <img src="@Artwork.ImageUrl" alt="@Artwork.AltText" loading="lazy" @onerror="() => imageFailed = true"/>
+        }
+
+        <button type="button" class="favourite-toggle @(Artwork.Starred ? "starred" : "")"
+                aria-label="@(Artwork.Starred ? "Remove from favourites" : "Add to favourites")"
+                @onclick="OnToggleFavourite"></button>
+    </div>
+
+    <div class="artwork-body">
+        <div>
+            <h2 class="artwork-title">@Artwork.Title</h2>
+            <p class="artwork-artist">@Artwork.Artist, @(Artwork.CompletionYear?.ToString() ?? "Unknown year")</p>
+            <p class="artwork-medium" title="@Artwork.Medium">@Artwork.Medium</p>
+        </div>
+
+        <div class="artwork-footer">
+            <span class="museum-badge">@Artwork.MuseumName</span>
+            <a class="artwork-link" href="@Artwork.WebUrl" target="_blank" rel="noopener noreferrer">View on the museum website</a>
+        </div>
+    </div>
+</article>
+
+@code {
+    [Parameter, EditorRequired] public Artwork Artwork { get; set; } = default!;
+
+    [Parameter] public EventCallback OnToggleFavourite { get; set; }
+
+    private bool imageFailed;
+}
