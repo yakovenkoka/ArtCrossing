@@ -1,0 +1,22 @@
+    .favourites {
+    max-width: 80rem;
+    margin: 0 auto 4rem;
+    padding: 0 1.25rem;
+}
+
+.status-message {
+    color: var(--secondary);
+    text-align: center;
+}
+
+.favourites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(17rem, 100%), 1fr));
+    gap: 2rem;
+}
+
+@media (min-width: 641px) {
+    .favourites {
+        padding: 0 1.5rem;
+    }
+}

@@ -1,7 +1,38 @@
 @page "/favourites"
+@rendermode InteractiveServer
+@inject FavouritesService FavouritesService
 
 <PageTitle>Favourites - Art Crossing</PageTitle>
 
 <h1>Your favourites</h1>
 
-<p>Your favourite artworks will appear here.</p>
+<section class="favourites">
+    @if (favourites.Count == 0)
+    {
+        <p class="status-message">Your favourite artworks will appear here.</p>
+    }
+    else
+    {
+        <div class="favourites-grid">
+            @foreach (Artwork artwork in favourites)
+            {
+                <ArtworkCard @key="artwork.Key" Artwork="artwork" OnToggleFavourite="() => RemoveFavourite(artwork)"/>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    private IReadOnlyList<Artwork> favourites = [];
+
+    protected override void OnInitialized()
+    {
+        favourites = FavouritesService.GetAll();
+    }
+
+    private void RemoveFavourite(Artwork artwork)
+    {
+        FavouritesService.Toggle(artwork);
+        favourites = FavouritesService.GetAll();
+    }
+}
