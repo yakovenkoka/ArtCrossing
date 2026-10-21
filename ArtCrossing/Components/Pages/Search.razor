@@ -1,6 +1,7 @@
 @page "/"
 @rendermode InteractiveServer
 @inject IEnumerable<IArtworkSource> ArtworkSources
+@inject FavouritesService Favourites
 
 <PageTitle>Art Crossing</PageTitle>
 
@@ -53,7 +54,7 @@
 
                             <button type="button" class="favourite-toggle @(artwork.Starred ? "starred" : "")"
                                     aria-label="@(artwork.Starred ? "Remove from favourites" : "Add to favourites")"
-                                    @onclick="() => artwork.Starred = !artwork.Starred"></button>
+                                    @onclick="() => Favourites.Toggle(artwork)"></button>
                         </div>
 
                         <div class="artwork-body">
@@ -99,6 +100,11 @@
         IReadOnlyList<Artwork>[] resultsPerSource = await Task.WhenAll(ArtworkSources.Select(SearchSourceAsync));
 
         results = resultsPerSource.SelectMany(artworks => artworks).ToList();
+        foreach (Artwork artwork in results)
+        {
+            artwork.Starred = Favourites.IsFavourite(artwork);
+        }
+
         isSearching = false;
     }
 

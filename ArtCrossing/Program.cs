@@ -9,6 +9,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient<IArtworkSource, ArticArtworkSource>();
 builder.Services.AddHttpClient<IArtworkSource, MetArtworkSource>();
 
+builder.Services.AddSingleton<FavouritesService>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
