@@ -35,10 +35,18 @@
             <div class="results-summary">
                 <span class="results-count">@results.Count results</span>
                 <span class="results-query">for “@searchedQuery”</span>
+
+                <label class="sort-control">
+                    Sort by
+                    <select @bind="sortOrder">
+                        <option value="@SortOrder.Default">Default</option>
+                        <option value="@SortOrder.Year">Year</option>
+                    </select>
+                </label>
             </div>
 
             <div class="results-grid">
-                @foreach (Artwork artwork in results)
+                @foreach (Artwork artwork in DisplayedResults)
                 {
                     <ArtworkCard @key="artwork.Key" Artwork="artwork" OnToggleFavourite="() => Favourites.Toggle(artwork)"/>
                 }
@@ -53,6 +61,15 @@
     private List<Artwork>? results;
     private List<string> errors = [];
     private bool isSearching;
+    private SortOrder sortOrder = SortOrder.Default;
+
+    private IEnumerable<Artwork> DisplayedResults => sortOrder == SortOrder.Year ? results!.Order() : results!;
+
+    private enum SortOrder
+    {
+        Default,
+        Year
+    }
 
     private async Task SearchAsync()
     {
