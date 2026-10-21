@@ -1,6 +1,7 @@
 @page "/"
 @rendermode InteractiveServer
 @inject IEnumerable<IArtworkSource> ArtworkSources
+@inject FavouritesService Favourites
 
 <PageTitle>Art Crossing</PageTitle>
 
@@ -39,32 +40,7 @@
             <div class="results-grid">
                 @foreach (Artwork artwork in results)
                 {
-                    <article class="artwork-card" @key="artwork.Key">
-                        <div class="artwork-image">
-                            @if (string.IsNullOrEmpty(artwork.ImageUrl) || failedImages.Contains(artwork.Key))
-                            {
-                                <span class="no-image">Image not available</span>
-                            }
-                            else
-                            {
-                                <img src="@artwork.ImageUrl" alt="@artwork.AltText" loading="lazy"
-                                     @onerror="() => failedImages.Add(artwork.Key)"/>
-                            }
-                        </div>
-
-                        <div class="artwork-body">
-                            <div>
-                                <h2 class="artwork-title">@artwork.Title</h2>
-                                <p class="artwork-artist">@artwork.Artist, @(artwork.CompletionYear?.ToString() ?? "Unknown year")</p>
-                                <p class="artwork-medium" title="@artwork.Medium">@artwork.Medium</p>
-                            </div>
-
-                            <div class="artwork-footer">
-                                <span class="museum-badge">@artwork.MuseumName</span>
-                                <a class="artwork-link" href="@artwork.WebUrl" target="_blank" rel="noopener noreferrer">View on the museum website</a>
-                            </div>
-                        </div>
-                    </article>
+                    <ArtworkCard @key="artwork.Key" Artwork="artwork" OnToggleFavourite="() => Favourites.Toggle(artwork)"/>
                 }
             </div>
         }
@@ -76,7 +52,6 @@
     private string searchedQuery = string.Empty;
     private List<Artwork>? results;
     private List<string> errors = [];
-    private HashSet<string> failedImages = [];
     private bool isSearching;
 
     private async Task SearchAsync()
@@ -89,12 +64,16 @@
         isSearching = true;
         searchedQuery = query.Trim();
         errors = [];
-        failedImages = [];
         results = null;
 
         IReadOnlyList<Artwork>[] resultsPerSource = await Task.WhenAll(ArtworkSources.Select(SearchSourceAsync));
 
         results = resultsPerSource.SelectMany(artworks => artworks).ToList();
+        foreach (Artwork artwork in results)
+        {
+            artwork.Starred = Favourites.IsFavourite(artwork);
+        }
+
         isSearching = false;
     }
 
